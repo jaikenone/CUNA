@@ -1,0 +1,179 @@
+Backend Coding Challenge
+
+Overview
+--------
+Implement a small api for interacting with a callback based third-party
+service.
+
+Rationale
+---------
+We believe the best way to get to know a potential applicant is through their 
+code and their process. However, traditional interview whiteboard/quiz style 
+coding challenges often place those applicants in situations where they are not
+ comfortable or capable of producing their best work. 
+
+By participating in this process, you will be giving us an artifact that we can
+review together and help us get a better feel for who you are as an engineer.
+It will hopefully give us insight into how you approach your work on a real 
+world problem of the type you'd face in your day to day work, and give you a 
+chance to communicate your ideas and processes through a piece of work you 
+wrote in your ideal work style and environment.
+
+We appreciate you taking the time and we look forward to both of us learning
+more about each other through this process.
+
+Code Ownership
+------------------
+All code produced for this challenge are wholely owned by the applicant. We
+have no intention to claim ownership or otherwise use this code for any purpose 
+but evaulatuing you for hiring processes. You remain the sole copyright holder 
+of this work.
+
+Trade-offs
+----------
+We do not believe it is in your best interest to work long hours on this 
+challenge. We don't want to waste your time or encourage a trade-off of
+quality for quantity.
+
+It is both okay and expected for you to cut corners. Things like 
+authentication and configuration can be time consuming, and often implemented 
+with standardized, off the shelf solutions. Where relevant, it's okay to 
+hard code values and/or add code comments to indicate your thinking and 
+any practices which you think would be time consuming to implement.
+
+It is okay if the solution is not highly perfromant or highly available, but
+it is useful to indicate how you would achieve this.
+
+Must haves
+----------
+We expect all submissions to have the following:
+
+1. Build instructions - Include a simple README or other file giving clear,
+concise instructions on how to build/run your code.
+
+2. Repeatable builds - All of engineers should be able to take your submission
+and instructions and run them without any major, obvious issues.
+
+3. Version history - Version control and history is an important part of our 
+process and we expect it to be a part of yours too. We like and prefer git.
+
+Nice to haves
+-------------
+These are recommended if you have the time:
+
+1. Design docs - Explain your thinking clearly in an overview document helps us
+and future readers (including yourself) better understand your thinking and your
+structure.
+
+2. Comprehensive Testing - We don't expect complete test coverage, but you should 
+provide some tests for key, critical areas. This helps us see your testing strategies
+ and what you think is critical. 
+
+3. Comprehensive Error Handling - Understanding the places where errors can be thrown 
+and how to deal with them is an important part of this task, but we again understand
+that doing this completely could be time consuming. Feel free to detail errors 
+through comments or other similar means to demonstrate your understanding.
+
+Gotchas
+--------
+To be clear, many of the following issues will either reflect poorly or result 
+in a no-pass from the interview team:
+
+1. Unstructured code/Single commit - We expect any results to be reflective of
+production quality, mantainable code. Writing the entirity of the challenge in a
+single file, or committing it once is not reflective of that quality standard.
+
+2. Scope Creep - An important part of professional engineering is producing a 
+product that matches requirements. Submissions that go far beyond what is will 
+reduce our ability to engage with your submission and is not a good use of your 
+time.
+
+3. Re-implementing standard libraries - Spending your limited time writing lists, 
+http servers, security algorithms, etc. provided by the standard library is in general
+a bad idea and specifically not a good use of your time. It's okay to stick to the proven
+software!
+
+Requirements
+------------
+Implement an application that can be used as an intermediary for a third-party service. 
+The third party service accepts a document request payload which includes a callback url
+and will respond to that url when the document is ready, which may be up to 10 business 
+days later. 
+
+Your application is expected to have four endpoints. These may be implemented as a stateful 
+service, or mutiple stateless services/functions connected to a store. The state must 
+be stored somewhere (if in memory, please note how to store at rest). Each should respond 
+to an http request and follow the REST conventions for methods.  The endpoints should meet 
+the follow requirements:
+
+1. POST a request
+
+POST /request
+BODY: Object {
+  "body": String
+}
+RETURNS String
+
+This should accept a JSON body consisting of a one key, "body", which is a string. Doing 
+this should initiate a request to the third-party service. It will also create a unique 
+identifer for this request we can later reference. 
+
+The request to the third party service should be a stubbed call to `https://urldefense.proofpoint.com/v2/url?u=http-3A__example.com_request&d=DwIGAg&c=iWzD8gpC8N4xSkOHZBDmCw&r=R0U6eziUSfkIiSy6xlVVHEbyT-5CVX85B2177L6G3Po&m=yeOGbdLEit9cyYWgLXxv5PRcMgRiallgPowRbt59hFw&s=lZ8qcf2Nw6VP2qI311Xp3wnZgZDhuaIrUg7krpQgTr4&e= " 
+with the following payload:
+
+BODY Object: {
+  "body": {body},
+  "callback": "/callback"
+}
+
+Comments or other indicators on how you would actually call this service are recommended, as well
+as any additional concerns around error handling/logging.
+
+2. POST callback
+POST /callback
+BODY String
+RETURNS 204
+
+This URL should be sent in original request. Afterwards, the service will send an
+initial POST with the text string `STARTED` to indicate it's they received the request.
+
+3. PUT callback
+PUT /callback
+BODY Object {
+  "status": String,
+  "detail": String
+}
+RETURNS 204
+
+At some later date, it will PUT status updates to this callback URL, each which will have 
+a json object with the keys of `status` and `detail`. The status will be one of `PROCESSED`,
+`COMPLETED` or `ERROR`. The detail with be a text string.
+
+4. GET status
+
+GET /status/{id}
+RETURNS Object {
+  "status": String,
+  "detail": String,
+  "body": String
+} 
+
+Finally, given the unique ID, we should be able to get the status of the request
+from our application. It will give us the status, detail and original body, as well as timestamps 
+for when it was created and when the latest update occured.
+  
+Technologies
+------------
+We encourage you to use those technologies you are most comfortable with. However, the 
+primary tools you'll be expected to use at this job are C# on .NET Core and the Azure 
+technology stack (including functions and CosmoDB). Displaying familiarity with these 
+is useful and encouraged. Solutions that stray too far will not be considered.
+
+Questions
+---------
+If you have any questions on the task presented here, we encourage you to reach out to 
+you representive and we will strive to get you answers in a timely fashion.
+
+Thank you for your interest and taking the time to complete this. We know your time is
+valuable and we hope this experience helps both sides get a sense of the other in a 
+quicker, more efficient manner.

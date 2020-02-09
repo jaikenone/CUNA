@@ -1,0 +1,7 @@
+flask
+flask-sqlalchemy
+psycopg2
+coverage
+pytest
+testing.postgresql
+flask_migrate
