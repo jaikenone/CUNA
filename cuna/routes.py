@@ -24,6 +24,21 @@ def configure_routes(app):
             )
             db.session.add(new_job)
             db.session.commit()
+
+            """
+                Add to forward job to external server.
+
+                import requests
+                url = 'https://urldefense.proofpoint.com/v2/url?u=http-3A__example.com_request&d=DwIGAg&c=iWzD8gpC8N4xSkOHZBDmCw&r=R0U6eziUSfkIiSy6xlVVHEbyT-5CVX85B2177L6G3Po&m=yeOGbdLEit9cyYWgLXxv5PRcMgRiallgPowRbt59hFw&s=lZ8qcf2Nw6VP2qI311Xp3wnZgZDhuaIrUg7krpQgTr4&e='
+                data = {
+                    'body': data['body'],
+                    'callback': f'/job/callback/{job_uuid}'
+                }
+                req = requests.post(url, data=data)
+
+                Inspect results and then maybe update the database to reflect that.
+            """
+
             return job_uuid, 200
         else:
             return "Missing body", 400

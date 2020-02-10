@@ -8,6 +8,7 @@ Task: see Mirador.Cuna.Mutual.Back.End.Exercise.txt
 * Docker-compose
 * pip
 * python 3.7
+* postgres (for running the test)
 
 ## Build and Run
 
@@ -69,11 +70,28 @@ $ curl '127.0.0.1:5000/job/status/1716353a-4c49-11ea-8d39-acde48001122'
 ## Test
 Run all test.
 ```
-$ py.test
+$ export POSTGRES_USER=test && \
+  export POSTGRES_PASSWORD=password && \
+  export POSTGRES_HOST=localhost && \
+  export POSTGRES_PORT=5432 && \
+  export POSTGRES_DB=cuna && \
+  py.test -vvv
 ```
 Sample results
 ```
+================================+==================== test session starts ==========================================================
+platform darwin -- Python 3.7.6, pytest-5.3.5, py-1.8.1, pluggy-0.13.1 -- /usr/local/opt/python/bin/python3.7
+cachedir: .pytest_cache
+rootdir: /Users/pwong/Code/CUNA/cuna
+collected 5 items
 
+test/test_routes.py::test_route__success PASSED                                                                               [ 20%]
+test/test_routes.py::test_route__success__status_get PASSED                                                                   [ 40%]
+test/test_routes.py::test_route__success__job_callback_put PASSED                                                             [ 60%]
+test/test_routes.py::test_route__success__job_callback_post PASSED                                                            [ 80%]
+test/test_routes.py::test_route__success__job_post PASSED                                                                     [100%]
+
+====================================================== 5 passed in 3.37s ===========================================================
 ```
 
 
@@ -85,5 +103,16 @@ $ coverage report
 ```
 Sample results
 ```
-
+Name                  Stmts   Miss  Cover
+-----------------------------------------
+__init__.py              22      0   100%
+app.py                   21     21     0%
+config.py                 7      0   100%
+models.py                11      0   100%
+routes.py                48      4    92%
+test/__init__.py          0      0   100%
+test/conftest.py         23      0   100%
+test/test_routes.py      44      2    95%
+-----------------------------------------
+TOTAL                   176     27    85%
 ```

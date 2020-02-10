@@ -7,7 +7,7 @@ from cuna.models import Job, db
 from cuna.routes import configure_routes
 
 
-def test_base_route(client):
+def test_route__success(client):
     response = client.get("/")
 
     assert response.get_data() == b'Hello, world!'
@@ -26,7 +26,7 @@ def test_route__success__status_get(client):
     db.session.add(new_job)
     db.session.commit()
 
-    rs = client.get(f"/status/{job_uuid}")
+    rs = client.get(f"/job/status/{job_uuid}")
 
     assert rs.status_code == 200
 
@@ -49,12 +49,12 @@ def test_route__success__job_callback_put(client):
     }
 
     rs = client.put(
-        f"/job/{job_uuid}",
+        f"/job/callback/{job_uuid}",
         content_type='application/json',
         data=json.dumps(mock_request_data)
     )
 
-    assert rs.status_code == 200
+    assert rs.status_code == 204
 
 def test_route__success__job_callback_post(client):
     job_uuid = str(uuid.uuid1())
@@ -70,7 +70,7 @@ def test_route__success__job_callback_post(client):
     db.session.commit()
 
     rs = client.post(
-        f"/job/{job_uuid}",
+        f"/job/callback/{job_uuid}",
         content_type='application/json',
         data="STARTED"
     )
@@ -88,5 +88,13 @@ def test_route__success__job_post(client):
         data=json.dumps(mock_request_data)
     )
 
-    assert rs.response == "xxx"
+    job_uuid = rs.data.decode("utf-8")
+    def validate_uuid(uuid_string):
+        try:
+            val = uuid.UUID(uuid_string, version=1)
+        except ValueError:
+            return False
+        return True
+
+    assert validate_uuid(job_uuid) == True
     assert rs.status_code == 200
